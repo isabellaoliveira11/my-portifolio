@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { createContext, useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
+import { IntlProvider } from "react-intl";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+import ptLanguage from "./shared/i18n/pt.json";
+import enLanguage from "./shared/i18n/en.json";
+
+import Sections from "./sections";
+
+import { Container } from "./styles/global";
+
+interface ContextProps {
+  language: string;
+  setLanguage: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default App
+export const Context = createContext<ContextProps>({
+  language: "pt",
+  setLanguage: () => {},
+});
+
+function App() {
+  const [language, setLanguage] = useState("pt");
+
+  return (
+    <Context.Provider value={{ language, setLanguage }}>
+      <IntlProvider
+        messages={language === "pt" ? ptLanguage : enLanguage}
+        locale="en"
+        defaultLocale="pt"
+      >
+        <Container className="App">
+          <Sections />
+        </Container>
+      </IntlProvider>
+    </Context.Provider>
+  );
+}
+
+export default App;
